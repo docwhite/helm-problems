@@ -1,0 +1,36 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - '*'
+
+jobs:
+  reproduce-error:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v1
+
+    - name: Set up Helm
+      run: |
+        curl curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+        chmod 700 get_helm.sh
+        ./get_helm.sh
+
+    - name: Deploy
+      run: |
+        echo Adding the stable repository
+        helm repo add stable https://kubernetes-charts.storage.googleapis.com/
+
+        echo Curling
+        curl https://kubernetes-charts.storage.googleapis.com/
+
+        echo Updating the repository
+        helm repo update
+
+        echo Searching redis on the repository
+        helm search repo redis
+
+        echo Update dependencies...
+        helm dependency update problems
